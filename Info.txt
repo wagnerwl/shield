@@ -1,0 +1,3 @@
+Quantized Yamnet von STM: 
+https://huggingface.co/STMicroelectronics/yamnet
+
