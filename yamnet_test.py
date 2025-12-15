@@ -30,13 +30,12 @@ def ensure_sample_rate(original_sample_rate, waveform, desired_sample_rate=16000
   return desired_sample_rate, waveform
 
 # --- 2. Audio laden und Vorbereiten ---
-wav_file_name = 'Dataset/mixes_eval/Glasssbruch.wav' # Dein Dateipfad
+wav_file_name = 'Dataset/mixes_eval/20023.wav' # Dein Dateipfad
 sample_rate, wav_data = wavfile.read(wav_file_name, 'rb')
 
 # A. Stereo Handling: Nur einen Kanal nehmen
 if wav_data.ndim > 1:
     # 0 = Linker Kanal, 1 = Rechter Kanal
-    # Falls das Ergebnis schlecht ist, tausche hier mal auf 0
     wav_data = wav_data[:, 1] 
 
 # B. Resampling auf 16kHz
@@ -47,11 +46,11 @@ duration = len(wav_data)/sample_rate
 print(f'Sample rate: {sample_rate} Hz')
 print(f'Total duration: {duration:.2f}s')
 
-# C. Normalisierung (WICHTIG!)
+# C. Normalisierung
 # Zuerst in Float umwandeln
 waveform = wav_data.astype(np.float32)
 
-# Normalisieren basierend auf dem tatsächlichen Max-Wert (löst das Silence-Problem)
+# Normalisieren basierend auf dem tatsächlichen Max-Wert 
 max_val = np.max(np.abs(waveform))
 if max_val > 0:
     waveform = waveform / max_val
@@ -59,7 +58,7 @@ if max_val > 0:
 else:
     print("Warnung: Audio ist komplett leer (stumm).")
 
-# Clipping auf -1.0 bis 1.0 (verhindert Resampling-Fehler > 1.0)
+# Clipping auf -1.0 bis 1.0 
 waveform = np.clip(waveform, -1.0, 1.0)
 
 
@@ -70,7 +69,7 @@ scores_np = scores.numpy()
 
 # --- 4. Auswertung (Silence entfernen & Peak finden) ---
 
-# Schritt A: "Silence" Klasse nullen, damit sie nicht gewinnt
+# Schritt A: "Silence" Klasse nullen
 try:
     silence_idx = class_names.index('Silence')
     scores_np[:, silence_idx] = 0.0
@@ -99,8 +98,8 @@ for i in top_5_indices:
 # --- 5. Visualisierung ---
 plt.figure(figsize=(12, 6))
 
-# Wir plotten die Verlaufskurven der Top 3 erkannten Klassen
-for i in top_5_indices[:3]:
+# Wir plotten die Verlaufskurven der Top 5 erkannten Klassen
+for i in top_5_indices[:5]:
     label = class_names[i]
     curve = scores_np[:, i]
     plt.plot(curve, label=label, linewidth=2)
