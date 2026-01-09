@@ -8,7 +8,7 @@ from scipy.io import wavfile
 from IPython.display import Audio
 
 # --- 1. Modell & Klassennamen laden ---
-model = hub.load('https://tfhub.dev/google/yamnet/1')
+model = hub.load('https://www.kaggle.com/models/google/yamnet/TensorFlow2/yamnet/1')
 
 def class_names_from_csv(class_map_csv_text):
   """Returns list of class names corresponding to score vector."""
@@ -30,7 +30,7 @@ def ensure_sample_rate(original_sample_rate, waveform, desired_sample_rate=16000
   return desired_sample_rate, waveform
 
 # --- 2. Audio laden und Vorbereiten ---
-wav_file_name = 'Dataset/mixes_eval/20023.wav' # Dein Dateipfad
+wav_file_name = 'Dataset/mixes_eval/20024.wav' # Dein Dateipfad
 sample_rate, wav_data = wavfile.read(wav_file_name, 'rb')
 
 # A. Stereo Handling: Nur einen Kanal nehmen
