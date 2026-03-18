@@ -30,7 +30,7 @@ def ensure_sample_rate(original_sample_rate, waveform, desired_sample_rate=16000
   return desired_sample_rate, waveform
 
 # --- 2. Audio laden und Vorbereiten ---
-wav_file_name = 'Dataset/mixes_eval/20023.wav' # Dein Dateipfad
+wav_file_name = 'Dataset/mixes_eval/Glasssbruch.wav' # Dein Dateipfad
 sample_rate, wav_data = wavfile.read(wav_file_name, 'rb')
 
 # A. Stereo Handling: Nur einen Kanal nehmen
