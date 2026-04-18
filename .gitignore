@@ -213,3 +213,5 @@ Dataset/
 
 # FSD DataFrame 
 Data_Frame/data/FSD50K
+Data_Frame/data/negative_samples
+Data_Frame/data/positive_samples
