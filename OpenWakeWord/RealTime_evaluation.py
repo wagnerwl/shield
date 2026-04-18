@@ -7,7 +7,7 @@ import onnxruntime as ort
 from openwakeword.utils import AudioFeatures
 
 # --- 1. Konfiguration ---
-PATH_TO_WAV = "./Data_Frame/data/positive_samples/348106.wav" # <-- HIER ANPASSEN
+PATH_TO_WAV = "./Data_Frame/data/positive_samples/356312.wav" # <-- HIER ANPASSEN
 PATH_TO_ONNX_MODEL = "OpenWakeWord/Model/glass_break_model_v2.onnx"
 
 # --- 2. Inferenz-Klasse ---
@@ -42,7 +42,7 @@ class GlassEvaluator:
             # Wir holen uns die Embeddings der letzten N Frames (Kontext-Fenster)
             # Da dein Modell beim Training den Durchschnitt über die ganze Audio-Datei gebildet hat,
             # nutzen wir hier z.B. die letzten 10 Frames (~800ms) als Kontext für den Peak
-            emb = self.preprocessor.get_features(n_feature_frames=10) # Shape: (1, 10, 96)
+            emb = self.preprocessor.get_features(n_feature_frames=60) # Shape: (1, 10, 96)
             
             if emb.shape[1] > 0:
                 # 2. Deine Features kombinieren (Mean + Max = 192)
