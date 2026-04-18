@@ -6,11 +6,14 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
 # 1. Konfiguration
-BASE_EMBEDDING_DIR = "./data/embeddings"
+BASE_EMBEDDING_DIR = "./Data_Frame/data/embeddings"     #Hier liegen die npy Dateien
 MODEL_NAME = "glass_break_model_v2"
 BATCH_SIZE = 16 # Kleinere Batches helfen oft beim Fine-Tuning
 EPOCHS = 150    # Höher, aber wir nutzen Early Stopping
 LEARNING_RATE = 0.001
+MODEL_DIR = "OpenWakeWord/Model"
+BEST_MODEL_PATH = os.path.join(MODEL_DIR, "best_model_temp.pth")
+ONNX_MODEL_PATH = os.path.join(MODEL_DIR, f"{MODEL_NAME}.onnx")
 
 def load_from_directory(directory):
     X, y = [], []
@@ -97,7 +100,7 @@ for epoch in range(EPOCHS):
     # Speichere das beste Modell
     if acc > best_acc:
         best_acc = acc
-        torch.save(model.state_dict(), "best_model_temp.pth")
+        torch.save(model.state_dict(), BEST_MODEL_PATH)
         patience_counter = 0
     else:
         patience_counter += 1
@@ -109,11 +112,11 @@ for epoch in range(EPOCHS):
 
 # 4. Export des BESTEN Standes
 print(f"\nTraining beendet. Beste Genauigkeit: {best_acc:.4f}")
-model.load_state_dict(torch.load("best_model_temp.pth"))
+model.load_state_dict(torch.load(BEST_MODEL_PATH))
 model.eval()
 dummy_input = torch.randn(1, 192)
-torch.onnx.export(model, dummy_input, f"{MODEL_NAME}.onnx", 
+torch.onnx.export(model, dummy_input, ONNX_MODEL_PATH, 
                   input_names=['input'], output_names=['output'],
                   dynamic_axes={'input': {0: 'batch_size'}, 'output': {0: 'batch_size'}})
 
-print(f"Verbessertes Modell als '{MODEL_NAME}.onnx' gespeichert.")
+print(f"Verbessertes Modell als '{ONNX_MODEL_PATH}' gespeichert.")
