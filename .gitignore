@@ -209,3 +209,7 @@ __marimo__/
 #Custom
 Dataset/
 .DS_Store
+
+
+# FSD DataFrame 
+Data_Frame/data/FSD50K
