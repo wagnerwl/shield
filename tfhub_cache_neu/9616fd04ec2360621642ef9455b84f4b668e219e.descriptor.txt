@@ -1,0 +1,3 @@
+Module: https://tfhub.dev/google/yamnet/1
+Download Time: 2026-04-15 14:38:09.379431
+Downloader Hostname: MacBook-Air-von-Wagner.local (PID:70815)
