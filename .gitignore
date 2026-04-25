@@ -215,3 +215,10 @@ Dataset/
 Data_Frame/data/FSD50K
 Data_Frame/data/negative_samples
 Data_Frame/data/positive_samples
+Data_Frame/data/negative_2sec
+Data_Frame/data/positive_2sec
+Data_Frame/data/oww_fensterbruch_v02
+
+# DataFrame Umegebungsgeräusche von OWW
+OpenWakeWord_v02/validation_set_features.npy
+OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy
