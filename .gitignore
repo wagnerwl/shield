@@ -218,6 +218,7 @@ Data_Frame/data/positive_samples
 Data_Frame/data/negative_2sec
 Data_Frame/data/positive_2sec
 Data_Frame/data/oww_fensterbruch_v02
+Data_Frame/data/df_NEU
 
 # DataFrame Umegebungsgeräusche von OWW
 OpenWakeWord_v02/validation_set_features.npy
