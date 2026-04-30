@@ -221,7 +221,12 @@ Data_Frame/data/oww_fensterbruch_v02
 Data_Frame/data/df_NEU
 Data_Frame/data/oww_fensterbruch_v03
 
+# DataFrame Windows
+Data_Frame\data\oww_fensterbruch_v03
+Data_Frame\data
+
 # DataFrame Umegebungsgeräusche von OWW
 OpenWakeWord_v02/validation_set_features.npy
 OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy
 
+OpenWakeWord_v02\openWakeWord
