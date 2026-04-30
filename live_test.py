@@ -4,7 +4,7 @@ import openwakeword
 from openwakeword.model import Model
 
 # Pfad zu DEINEM trainierten Modell
-MODELL_PFAD = "./Data_Frame/data/oww_fensterbruch_v02.onnx"
+MODELL_PFAD = "./Data_Frame/data/oww_fensterbruch_v03.onnx"
 
 print("Lade Fensterbruch-Modell...")
 # Wichtig: inference_framework="onnx" sagt ihm, dass er kein tflite suchen soll!
@@ -32,12 +32,12 @@ try:
         prediction = oww_model.predict(audio_data)
         
         # Der Name in der Prediction entspricht deinem Modellnamen
-        score = prediction.get("oww_fensterbruch_v02", 0.0)
+        score = prediction.get("oww_fensterbruch_v03", 0.0)
         
-        print(f"Aktueller Score: {score*100:.1f}%")
+        # print(f"Aktueller Score: {score*100:.1f}%")
         # Wenn die KI sich zu > 50% sicher ist, schlägt sie Alarm
-        # if score > 0.5:
-        #    print(f"🚨 FENSTERBRUCH ERKANNT! (Sicherheit: {score*100:.1f}%)")
+        if score > 0.5:
+            print(f"🚨 FENSTERBRUCH ERKANNT! (Sicherheit: {score*100:.1f}%)")
             
 
 except KeyboardInterrupt:
