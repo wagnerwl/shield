@@ -1,5 +1,6 @@
 # ./Data_Frame/data/positive_samples/348106.wav
 import os
+from pathlib import Path
 import numpy as np
 import librosa
 import matplotlib.pyplot as plt
@@ -7,8 +8,9 @@ import onnxruntime as ort
 from openwakeword.utils import AudioFeatures
 
 # --- 1. Konfiguration ---
-PATH_TO_WAV = "./Data_Frame/data/positive_samples/356312.wav" # <-- HIER ANPASSEN
-PATH_TO_ONNX_MODEL = "OpenWakeWord/Model/glass_break_model_v2.onnx"
+BASE_DIR = Path(__file__).resolve().parents[1]
+PATH_TO_WAV = BASE_DIR / "Data_Frame/data/oww_fensterbruch_v03/positive_test/2sec_2sec_163364.wav" # <-- HIER ANPASSEN
+PATH_TO_ONNX_MODEL = BASE_DIR / "Data_Frame/data/oww_fensterbruch_v03.onnx"
 
 # --- 2. Inferenz-Klasse ---
 class GlassEvaluator:
@@ -20,6 +22,7 @@ class GlassEvaluator:
         
         print("Lade dein Glasbruch-Modell...")
         self.classifier = ort.InferenceSession(model_path, providers=['CPUExecutionProvider'])
+        self.input_name = self.classifier.get_inputs()[0].name
         
     def predict(self, wav_path):
         # Audio laden (librosa lädt als float32 zwischen -1 und 1)
@@ -51,7 +54,7 @@ class GlassEvaluator:
                 combined = np.concatenate([avg_feat, max_feat]).astype(np.float32).reshape(1, 192)
                 
                 # 3. Klassifizierung durch dein ONNX-Modell
-                result = self.classifier.run(None, {"input": combined})[0]
+                result = self.classifier.run(None, {self.input_name: combined})[0]
                 scores.append(result[0][0])
             else:
                 scores.append(0.0)
@@ -60,13 +63,13 @@ class GlassEvaluator:
 
 # --- 3. Main & Visualisierung ---
 if __name__ == "__main__":
-    if not os.path.exists(PATH_TO_WAV):
+    if not PATH_TO_WAV.exists():
         print(f"Fehler: Audiodatei '{PATH_TO_WAV}' nicht gefunden!")
-    elif not os.path.exists(PATH_TO_ONNX_MODEL):
+    elif not PATH_TO_ONNX_MODEL.exists():
         print(f"Fehler: Modell '{PATH_TO_ONNX_MODEL}' nicht gefunden!")
     else:
-        evaluator = GlassEvaluator(PATH_TO_ONNX_MODEL)
-        scores = evaluator.predict(PATH_TO_WAV)
+        evaluator = GlassEvaluator(str(PATH_TO_ONNX_MODEL))
+        scores = evaluator.predict(str(PATH_TO_WAV))
         
         # Zeitachse (1280 Samples bei 16kHz = 0.08 Sekunden pro Frame)
         time_axis = np.arange(len(scores)) * 0.08

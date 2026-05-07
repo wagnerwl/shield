@@ -212,6 +212,8 @@ Dataset/
 
 
 # FSD DataFrame 
+Data_Frame/data/
+Data_Frame/data/Artificial_DataFrame
 Data_Frame/data/FSD50K
 Data_Frame/data/negative_samples
 Data_Frame/data/positive_samples
@@ -220,6 +222,7 @@ Data_Frame/data/positive_2sec
 Data_Frame/data/oww_fensterbruch_v02
 Data_Frame/data/df_NEU
 Data_Frame/data/oww_fensterbruch_v03
+Data_Frame/data/artifical_DF
 
 # DataFrame Windows
 Data_Frame\data\oww_fensterbruch_v03
