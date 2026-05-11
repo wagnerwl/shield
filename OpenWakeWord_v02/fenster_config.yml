@@ -1,11 +1,11 @@
-model_name: "oww_fensterbruch_v03"
+model_name: "oww_fensterbruch_v04"
 output_dir: "Data_Frame/data/"
 
 # Da wir keine Sprache generieren, sind diese Felder egal, müssen aber da sein:
 target_phrase: ["fensterbruch"] 
 custom_negative_phrases: []
-n_samples: 1000
-n_samples_val: 100
+n_samples: 993
+n_samples_val: 191
 tts_batch_size: 50
 # piper_sample_generator_path: "OpenWakeWord_v02/"
 
@@ -26,13 +26,13 @@ feature_data_files:
 # Batch-Konfiguration (Wie viele Clips pro Trainingsschritt)
 batch_n_per_class:
   "ACAV100M_sample": 1024
-  "adversarial_negative": 150 # Das sind die Negative Geräusche
-  "positive": 150             # Das sind die Glasbrüche (wählt 150 von meinen ca365 Clips aus)
+  "adversarial_negative": 250 # Das sind die Negative Geräusche
+  "positive": 250             # Das sind die Glasbrüche (wählt 150 von meinen ca365 Clips aus)
 
 # Modell-Größe und Trainingsschritte
 model_type: "dnn"   # dnn --> Deep Neural Network
 layer_size: 32      # --> 32 Neuronen pro Schicht
 steps: 25000        # Trainingsschritte: Je mehr Schritte, desto besser (aber auch länger die Trainingszeit)
 
-max_negative_weight: 2000
-target_false_positives_per_hour: 0.2
+max_negative_weight: 2500
+target_false_positives_per_hour: 0.1
