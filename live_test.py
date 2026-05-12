@@ -4,7 +4,7 @@ import openwakeword
 from openwakeword.model import Model
 
 # Pfad zu DEINEM trainierten Modell
-MODELL_PFAD = "./Data_Frame/data/oww_fensterbruch_v03.onnx"
+MODELL_PFAD = "./OpenWakeWord_v02/models/oww_fensterbruch_v03.onnx"
 
 print("Lade Fensterbruch-Modell...")
 # Wichtig: inference_framework="onnx" sagt ihm, dass er kein tflite suchen soll!

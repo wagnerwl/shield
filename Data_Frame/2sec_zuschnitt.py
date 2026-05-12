@@ -48,7 +48,7 @@ def process_glass_audio(input_dir, output_dir, target_length_ms=2000):
 
 # HIER DEINE PFADE EINTRAGEN:
 # 1. Deinen aktuellen Positiv-Ordner verarbeiten
-process_glass_audio("Data_Frame/data/df_NEU/44_1", "Data_Frame/data/positive_2sec")
+process_glass_audio("Data_Frame/data/oww_fensterbruch_v04/positive_test_mix", "Data_Frame/data/positive_2sec")
 
 # 2. Deinen aktuellen Negativ-Ordner verarbeiten
 # process_glass_audio("Data_Frame/data/FSD50K/negative_samples_neu", "Data_Frame/data/negative_2sec")
