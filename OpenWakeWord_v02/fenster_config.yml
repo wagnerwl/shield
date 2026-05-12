@@ -1,5 +1,5 @@
 model_name: "oww_fensterbruch_v04"
-output_dir: "Data_Frame/data/"
+output_dir: "./Data_Frame/data"
 
 # Da wir keine Sprache generieren, sind diese Felder egal, müssen aber da sein:
 target_phrase: ["fensterbruch"] 
@@ -21,7 +21,7 @@ background_paths_duplication_rate: []
 # Pfade zu den generellen Hintergrundgeräuschen (die du in Schritt 2 geladen hast)
 false_positive_validation_data_path: "./OpenWakeWord_v02/validation_set_features.npy"
 feature_data_files:
-  "ACAV100M_sample": "./OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy"
+  "ACAV100M_sample": "OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy"
 
 # Batch-Konfiguration (Wie viele Clips pro Trainingsschritt)
 batch_n_per_class:

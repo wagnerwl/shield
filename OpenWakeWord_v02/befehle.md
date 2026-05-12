@@ -13,7 +13,7 @@ PYTHONPATH="./OpenWakeWord_v02/openWakeWord" python OpenWakeWord_v02/openWakeWor
 für Windows cmd
 
 ```bash
-set PYTHONPATH=.\OpenWakeWord_v02\openWakeWord & set TORCHAUDIO_USE_BACKEND_DISPATCHER=1 & python OpenWakeWord_v02\openWakeWord\openwakeword\train_windows.py --training_config OpenWakeWord_v02\fenster_config.yml --augment_clips
+set PYTHONPATH=OpenWakeWord_v02\openWakeWord & set TORCHAUDIO_USE_BACKEND_DISPATCHER=1 & python OpenWakeWord_v02\openWakeWord\openwakeword\train_windows.py --training_config OpenWakeWord_v02\fenster_config.yml --augment_clips
 ```
 
 
