@@ -237,6 +237,13 @@ Data_Frame/data/oww_fensterbruch_v05/positive_1-28
 Data_Frame/data/oww_fensterbruch_v05/positive_test
 Data_Frame/data/oww_fensterbruch_v05/positive_train
 
+Data_Frame/data/oww_fensterbruch_v06/negative_1_28
+Data_Frame/data/oww_fensterbruch_v06/negative_test
+Data_Frame/data/oww_fensterbruch_v06/negative_train
+Data_Frame/data/oww_fensterbruch_v06/positive_1_28
+Data_Frame/data/oww_fensterbruch_v06/positive_test
+Data_Frame/data/oww_fensterbruch_v06/positive_train
+
 # DataFrame Windows
 Data_Frame\data\oww_fensterbruch_v03
 Data_Frame\data

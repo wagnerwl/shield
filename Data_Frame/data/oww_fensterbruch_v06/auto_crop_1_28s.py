@@ -7,10 +7,10 @@ import glob
 # 1. DEINE ORDNER-PFADE (Hier anpassen!)
 # ==========================================
 # Wo liegen deine aktuellen (zu langen) Glasbruch-Dateien?
-INPUT_DIR = "Data_Frame/data/oww_fensterbruch_v04/negative_train" 
+INPUT_DIR = "Data_Frame/data/oww_fensterbruch_v04/positive_train" 
 
 # Wo sollen die perfekten 1,28s Dateien gespeichert werden?
-OUTPUT_DIR = "Data_Frame/data/oww_fensterbruch_v05/negative_1_28"
+OUTPUT_DIR = "Data_Frame/data/oww_fensterbruch_v06/positive_1_28"
 
 # ==========================================
 # 2. AUDIO EINSTELLUNGEN
@@ -74,7 +74,7 @@ def process_audio_files():
             # Falls die Originaldatei insgesamt KÜRZER als 1,28s war, füllen wir am Ende mit Nullen (Stille) auf
             if len(cropped_audio) < TARGET_SAMPLES:
                 padding = TARGET_SAMPLES - len(cropped_audio)
-                cropped_audio = np.pad(cropped_audio, (0, padding), 'constant')
+                cropped_audio = np.pad(cropped_audio, (0, padding), 'reflect')
                 
             # 4. Neue Datei speichern
             out_path = os.path.join(OUTPUT_DIR, filename)

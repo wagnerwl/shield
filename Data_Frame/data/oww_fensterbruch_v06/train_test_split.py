@@ -7,14 +7,14 @@ import glob
 # 1. DEINE QUELL-ORDNER 
 # (Hier liegen die fertig zugeschnittenen 1,28s Dateien)
 # ==========================================
-SOURCE_POS = "Data_Frame/data/oww_fensterbruch_v05/positive_1-28"
-SOURCE_NEG = "Data_Frame/data/oww_fensterbruch_v05/negative_1_28"
+SOURCE_POS = "Data_Frame/data/oww_fensterbruch_v06/positive_1_28"
+SOURCE_NEG = "Data_Frame/data/oww_fensterbruch_v06/negative_1_28"
 
 # ==========================================
 # 2. DEIN ZIEL-ORDNER (OpenWakeWord Struktur)
 # ==========================================
 # Das ist der Pfad, den das Skript aus deiner config generiert:
-TARGET_BASE = "Data_Frame/data/oww_fensterbruch_v05"
+TARGET_BASE = "Data_Frame/data/oww_fensterbruch_v06"
 
 # ==========================================
 # 3. SPLIT-EINSTELLUNGEN
