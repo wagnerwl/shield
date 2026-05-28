@@ -23,16 +23,16 @@ false_positive_validation_data_path: "./OpenWakeWord_v02/validation_set_features
 feature_data_files:
   "ACAV100M_sample": "OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy"
 
-# Batch-Konfiguration (Wie viele Clips pro Trainingsschritt)
+# Batch-Konfiguration (Radikale Minderheit für Positive)
 batch_n_per_class:
-  "ACAV100M_sample": 250
-  "adversarial_negative": 250 # Das sind die Negative Geräusche
-  "positive": 250 # Das sind die Glasbrüche
+  "ACAV100M_sample": 1024     # Wir fluten das Modell mit Lärm
+  "adversarial_negative": 250 # Deine Störgeräusche (Schlüssel, etc.)
+  "positive": 100             # Glasbruch ist eine extreme Seltenheit!
 
 # Modell-Größe und Trainingsschritte
-model_type: "dnn" # dnn --> Deep Neural Network
-layer_size: 32 # --> 32 Neuronen pro Schicht
-steps: 25000 # Trainingsschritte: Je mehr Schritte, desto besser (aber auch länger die Trainingszeit)
+model_type: "rnn"   # <-- DER GAMECHANGER
+layer_size: 64      # (Wird vom RNN-Code ignoriert, muss aber da stehen)
+steps: 25000        
 
-max_negative_weight: 50
-target_false_positives_per_hour: 0.2
+max_negative_weight: 10000    # Absolute Todesstrafe für Fehlalarme! (Vorher 50)
+target_false_positives_per_hour: 0.05
