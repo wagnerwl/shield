@@ -252,4 +252,7 @@ Data_Frame\data
 OpenWakeWord_v02/validation_set_features.npy
 OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy
 
+#OpenWakeWord Repo
 OpenWakeWord_v02\openWakeWord
+
+OpenWakeWord_v02/openWakeWord
