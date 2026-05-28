@@ -1,8 +1,8 @@
-model_name: "oww_fensterbruch_v06"
+model_name: "oww_fensterbruch_v07"
 output_dir: "./Data_Frame/data"
 
 # Da wir keine Sprache generieren, sind diese Felder egal, müssen aber da sein:
-target_phrase: ["fensterbruch"] 
+target_phrase: ["fensterbruch"]
 custom_negative_phrases: []
 n_samples: 1006
 n_samples_val: 178
@@ -25,14 +25,14 @@ feature_data_files:
 
 # Batch-Konfiguration (Wie viele Clips pro Trainingsschritt)
 batch_n_per_class:
-  "ACAV100M_sample": 1024
+  "ACAV100M_sample": 250
   "adversarial_negative": 250 # Das sind die Negative Geräusche
-  "positive": 250             # Das sind die Glasbrüche 
+  "positive": 250 # Das sind die Glasbrüche
 
 # Modell-Größe und Trainingsschritte
-model_type: "dnn"   # dnn --> Deep Neural Network
-layer_size: 32      # --> 32 Neuronen pro Schicht
-steps: 25000        # Trainingsschritte: Je mehr Schritte, desto besser (aber auch länger die Trainingszeit)
+model_type: "dnn" # dnn --> Deep Neural Network
+layer_size: 32 # --> 32 Neuronen pro Schicht
+steps: 25000 # Trainingsschritte: Je mehr Schritte, desto besser (aber auch länger die Trainingszeit)
 
-max_negative_weight: 2500
-target_false_positives_per_hour: 0.1
+max_negative_weight: 50
+target_false_positives_per_hour: 0.2

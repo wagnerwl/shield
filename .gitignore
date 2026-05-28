@@ -220,6 +220,8 @@ Dataset/
 # Data_Frame/data/
 Data_Frame/data/Artificial_DataFrame
 Data_Frame/data/FSD50K
+Data_Frame/data/DataSet_Glassbruch_all_v03
+Data_Frame/data/DataSet_Glassbruch_all_v02
 Data_Frame/data/negative_samples
 Data_Frame/data/positive_samples
 Data_Frame/data/negative_2sec
@@ -244,6 +246,11 @@ Data_Frame/data/oww_fensterbruch_v06/positive_1_28
 Data_Frame/data/oww_fensterbruch_v06/positive_test
 Data_Frame/data/oww_fensterbruch_v06/positive_train
 
+Data_Frame/data/oww_fensterbruch_v07/negative_test
+Data_Frame/data/oww_fensterbruch_v07/negative_train
+Data_Frame/data/oww_fensterbruch_v07/positive_test
+Data_Frame/data/oww_fensterbruch_v07/positive_train
+
 # DataFrame Windows
 Data_Frame\data\oww_fensterbruch_v03
 Data_Frame\data
@@ -254,5 +261,4 @@ OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy
 
 #OpenWakeWord Repo
 OpenWakeWord_v02\openWakeWord
-
 OpenWakeWord_v02/openWakeWord
