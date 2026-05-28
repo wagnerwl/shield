@@ -9,8 +9,8 @@ from openwakeword.utils import AudioFeatures
 
 # --- 1. Konfiguration ---
 BASE_DIR = Path(__file__).resolve().parents[1]
-PATH_TO_WAV = BASE_DIR / "Data_Frame/data/oww_fensterbruch_v03/positive_test/2sec_2sec_163364.wav" # <-- HIER ANPASSEN
-PATH_TO_ONNX_MODEL = BASE_DIR / "Data_Frame/data/oww_fensterbruch_v03.onnx"
+PATH_TO_WAV = BASE_DIR / "Data_Frame/data/oww_fensterbruch_v04/positive_test/2sec_2sec_2sec_204777.wav" # <-- HIER ANPASSEN
+PATH_TO_ONNX_MODEL = BASE_DIR / "OpenWakeWord_v02/models/oww_fensterbruch_v03.onnx"
 
 # --- 2. Inferenz-Klasse ---
 class GlassEvaluator:
