@@ -208,11 +208,16 @@ __marimo__/
 
 #Custom
 Dataset/
+
+# macOS Systemdateien ignorieren
 .DS_Store
+._*
+**/.DS_Store
+**/._*
 
 
 # FSD DataFrame 
-Data_Frame/data/
+# Data_Frame/data/
 Data_Frame/data/Artificial_DataFrame
 Data_Frame/data/FSD50K
 Data_Frame/data/negative_samples
@@ -223,6 +228,14 @@ Data_Frame/data/oww_fensterbruch_v02
 Data_Frame/data/df_NEU
 Data_Frame/data/oww_fensterbruch_v03
 Data_Frame/data/artifical_DF
+Data_Frame/data/oww_fensterbruch_v04
+
+Data_Frame/data/oww_fensterbruch_v05/negative_1_28
+Data_Frame/data/oww_fensterbruch_v05/negative_test
+Data_Frame/data/oww_fensterbruch_v05/negative_train
+Data_Frame/data/oww_fensterbruch_v05/positive_1-28
+Data_Frame/data/oww_fensterbruch_v05/positive_test
+Data_Frame/data/oww_fensterbruch_v05/positive_train
 
 # DataFrame Windows
 Data_Frame\data\oww_fensterbruch_v03
