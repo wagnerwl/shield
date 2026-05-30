@@ -1,4 +1,4 @@
-model_name: "oww_fensterbruch_v07"
+model_name: "oww_fensterbruch_v05"
 output_dir: "./Data_Frame/data"
 
 # Da wir keine Sprache generieren, sind diese Felder egal, müssen aber da sein:
