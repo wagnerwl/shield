@@ -1,11 +1,11 @@
-model_name: "oww_fensterbruch_v05"
+model_name: "oww_fensterbruch_v08"
 output_dir: "./Data_Frame/data"
 
 # Da wir keine Sprache generieren, sind diese Felder egal, müssen aber da sein:
 target_phrase: ["fensterbruch"]
 custom_negative_phrases: []
-n_samples: 1006
-n_samples_val: 178
+n_samples: 933
+n_samples_val: 234
 tts_batch_size: 50
 # piper_sample_generator_path: "OpenWakeWord_v02/"
 
@@ -19,20 +19,24 @@ background_paths: []
 background_paths_duplication_rate: []
 
 # Pfade zu den generellen Hintergrundgeräuschen (die du in Schritt 2 geladen hast)
-false_positive_validation_data_path: "./OpenWakeWord_v02/validation_set_features.npy"
+# false_positive_validation_data_path: "./OpenWakeWord_v02/validation_set_features.npy"
+false_positive_validation_data_path: "Data_Frame/data/FP_DataSet/validation_1h_features.npy" # <-- PFAD ZU DEINER NEUEN 1H NPY-DATEI
 feature_data_files:
-  "ACAV100M_sample": "OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy"
+  # "ACAV100M_sample": "OpenWakeWord_v02/openwakeword_features_ACAV100M_2000_hrs_16bit.npy"
+  "Eigener_Hintergrund": "Data_Frame/data/FP_DataSet/background_3h_features.npy" # <-- PFAD ZU DEINER NEUEN 3H NPY-DATEI
+  "adversarial_negative": "Data_Frame/data/FP_DataSet/dev/dev_hard_negatives_features.npy" # Deine neuen, extrem dichten Störgeräusche!
 
 # Batch-Konfiguration (Radikale Minderheit für Positive)
 batch_n_per_class:
-  "ACAV100M_sample": 1024     # Wir fluten das Modell mit Lärm
-  "adversarial_negative": 250 # Deine Störgeräusche (Schlüssel, etc.)
-  "positive": 100             # Glasbruch ist eine extreme Seltenheit!
+  # "ACAV100M_sample": 1024     # Wir fluten das Modell mit Lärm
+  "Eigener_Hintergrund": 1024 # Wir fluten das Modell mit Lärm
+  "adversarial_negative": 250 # Wir feuern in jedem Batch 250x hartes Klirren auf das Modell ab!
+  "positive": 100 # Glasbruch ist eine extreme Seltenheit!
 
 # Modell-Größe und Trainingsschritte
-model_type: "rnn"   # <-- DER GAMECHANGER
-layer_size: 64      # (Wird vom RNN-Code ignoriert, muss aber da stehen)
-steps: 25000        
+model_type: "rnn" # <-- DER GAMECHANGER
+layer_size: 64 # (Wird vom RNN-Code ignoriert, muss aber da stehen)
+steps: 25000
 
-max_negative_weight: 10000    # Absolute Todesstrafe für Fehlalarme! (Vorher 50)
+max_negative_weight: 10000 # Absolute Todesstrafe für Fehlalarme! (Vorher 50)
 target_false_positives_per_hour: 0.05
