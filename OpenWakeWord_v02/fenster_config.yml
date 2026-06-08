@@ -38,5 +38,5 @@ model_type: "rnn" # <-- DER GAMECHANGER
 layer_size: 64 # (Wird vom RNN-Code ignoriert, muss aber da stehen)
 steps: 25000
 
-max_negative_weight: 10000 # Absolute Todesstrafe für Fehlalarme! (Vorher 50)
+max_negative_weight: 1000 # Stark genug gegen Fehlalarme, aber die KI bleibt wach!
 target_false_positives_per_hour: 0.05
