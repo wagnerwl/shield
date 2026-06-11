@@ -1,0 +1,6 @@
+FINALE TRAININGSMETRIKEN (Letzte Epoche):
+=========================================
+Training Loss:         0.1163
+Validation Recall:     0.4829
+Validation Accuracy:   0.7372
+False Positives/Hour:  14.8673

@@ -258,6 +258,8 @@ Data_Frame/data/oww_fensterbruch_v07/positive_train
 Data_Frame/data/oww_fensterbruch_v08/positive_test
 Data_Frame/data/oww_fensterbruch_v08/positive_train
 
+Data_Frame/data/rir_dataset
+
 # DataFrame Windows
 Data_Frame\data\oww_fensterbruch_v03
 Data_Frame\data

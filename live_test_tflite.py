@@ -3,12 +3,12 @@ import numpy as np
 import openwakeword
 from openwakeword.model import Model
 
-# Pfad zu DEINEM trainierten Modell
-MODELL_PFAD = "./OpenWakeWord_v02/models/oww_fensterbruch_v081.onnx"
+# Pfad zu DEINEM trainierten TFLite-Modell (Endung geändert)
+MODELL_PFAD = "ei-detection-of-glass-breaking.5.lite"
 
-print("Lade Fensterbruch-Modell...")
-# Wichtig: inference_framework="onnx" sagt ihm, dass er kein tflite suchen soll!
-oww_model = Model(wakeword_models=[MODELL_PFAD], inference_framework="onnx")
+print("Lade Fensterbruch-Modell (TFLite)...")
+# Wichtig: inference_framework="tflite" sagt ihm, dass er die TFLite-Engine nutzen soll!
+oww_model = Model(wakeword_models=[MODELL_PFAD], inference_framework="tflite")
 
 # Audio-Setup (Mac Mikrofon)
 CHUNK = 1280
@@ -24,7 +24,7 @@ print("Drücke STRG+C zum Beenden.\n")
 
 consecutive_frames = 0
 TRIGGER_THRESHOLD = 0.65  # Modell muss sich zu 65% sicher sein
-REQUIRED_FRAMES = 1       # Modell muss 3x in Folge den Threshold knacken
+REQUIRED_FRAMES = 1       # Modell muss 1x den Threshold knacken
 
 try:
     while True:
@@ -35,10 +35,11 @@ try:
         # Audio an dein Modell füttern
         prediction = oww_model.predict(audio_data)
         
-        # Der Name in der Prediction entspricht deinem Modellnamen
-        score = prediction.get("oww_fensterbruch_v08", 0.0)
+        # Der Name in der Prediction entspricht normalerweise dem Dateinamen (ohne .tflite).
+        # Falls es hier Probleme gibt, überprüfe mit print(prediction), wie der exakte Key heißt.
+        score = prediction.get("oww_fensterbruch_v081", 0.0) 
         
-        # --- NEUE LOGIK ---
+        # --- LOGIK ---
         if score >= TRIGGER_THRESHOLD:
             consecutive_frames += 1  # Zähler hochsetzen
         else:

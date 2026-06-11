@@ -11,10 +11,10 @@ tts_batch_size: 50
 
 # Augmentation (Hier passiert die Magie)
 augmentation_batch_size: 16
-augmentation_rounds: 20 # Erstellt 20 leicht veränderte Versionen jedes Originalclips, um das Modell robuster zu machen
+augmentation_rounds: 15 # Erstellt 20 leicht veränderte Versionen jedes Originalclips, um das Modell robuster zu machen
 
 # Diese drei Zeilen hinzufügen, damit das Skript nicht meckert:
-rir_paths: []
+rir_paths: [] # "Data_Frame/data/rir_dataset/convert"
 background_paths: []
 background_paths_duplication_rate: []
 
@@ -29,14 +29,14 @@ feature_data_files:
 # Batch-Konfiguration (Radikale Minderheit für Positive)
 batch_n_per_class:
   # "ACAV100M_sample": 1024     # Wir fluten das Modell mit Lärm
-  "Eigener_Hintergrund": 1024 # Wir fluten das Modell mit Lärm
-  "adversarial_negative": 250 # Wir feuern in jedem Batch 250x hartes Klirren auf das Modell ab!
-  "positive": 100 # Glasbruch ist eine extreme Seltenheit!
+  "Eigener_Hintergrund": 512 # Wir fluten das Modell mit Lärm
+  "adversarial_negative": 128 # Wir feuern in jedem Batch 250x hartes Klirren auf das Modell ab!
+  "positive": 256 # Glasbruch ist eine extreme Seltenheit!
 
 # Modell-Größe und Trainingsschritte
 model_type: "rnn" # <-- DER GAMECHANGER
 layer_size: 64 # (Wird vom RNN-Code ignoriert, muss aber da stehen)
-steps: 25000
+steps: 15000
 
-max_negative_weight: 1000 # Stark genug gegen Fehlalarme, aber die KI bleibt wach!
-target_false_positives_per_hour: 0.05
+max_negative_weight: 200 # Stark genug gegen Fehlalarme, aber die KI bleibt wach!
+target_false_positives_per_hour: 0.1
