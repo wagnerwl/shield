@@ -216,6 +216,11 @@ Dataset/
 **/._*
 
 
+#Neues eigenes ai_model
+ai_model/data
+
+
+
 # FSD DataFrame 
 # Data_Frame/data/
 Data_Frame/data/Artificial_DataFrame
