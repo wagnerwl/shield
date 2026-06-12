@@ -67,35 +67,35 @@ def prozessiere_lange_audiospur(input_pfad, output_ordner, datei_prefix):
 def main():
     # --- 1. Definiere deine Eingangs-Dateien ---
     # os.path.join baut die Pfade automatisch richtig zusammen, egal ob Mac oder Windows
-    pfad_3h_hintergrund = os.path.join(PROJECT_ROOT, "data", "raw", "background", "background_3h_features.wav")
-    pfad_1h_validierung = os.path.join(PROJECT_ROOT, "data", "raw", "background", "validation_1h_features.wav")
-    pfad_hard_negatives = os.path.join(PROJECT_ROOT, "data", "raw", "hard_negatives", "dev_hard_negatives_dense.wav")
+    # pfad_3h_hintergrund = os.path.join(PROJECT_ROOT, "data", "raw", "background", "background_3h_features.wav")
+    # pfad_1h_validierung = os.path.join(PROJECT_ROOT, "data", "raw", "background", "validation_1h_features.wav")
+    pfad_hard_negatives = os.path.join(PROJECT_ROOT, "data", "raw", "hard_negatives", "eval_hard_negatives_dense.wav")
 
     # --- 2. Definiere deine Ausgangs-Ordner ---
     ordner_train_neg = os.path.join(PROJECT_ROOT, "data", "processed", "train", "neg")
-    ordner_val_neg   = os.path.join(PROJECT_ROOT, "data", "processed", "val", "neg")
+    # ordner_val_neg   = os.path.join(PROJECT_ROOT, "data", "processed", "val", "neg")
 
     # --- 3. Lass die Maschine arbeiten ---
     # Hintergrund für Training
-    prozessiere_lange_audiospur(
-        input_pfad=pfad_3h_hintergrund, 
-        output_ordner=ordner_train_neg, 
-        datei_prefix="bg_train"
-    )
+    # prozessiere_lange_audiospur(
+    #     input_pfad=pfad_3h_hintergrund, 
+    #     output_ordner=ordner_train_neg, 
+    #     datei_prefix="bg_train"
+    # )
 
     # Hard Negatives für Training (kommen in den gleichen 'neg'-Ordner!)
     prozessiere_lange_audiospur(
         input_pfad=pfad_hard_negatives, 
         output_ordner=ordner_train_neg, 
-        datei_prefix="hardneg_train"
+        datei_prefix="hardneg_val"
     )
 
     # Hintergrund für Validierung
-    prozessiere_lange_audiospur(
-        input_pfad=pfad_1h_validierung, 
-        output_ordner=ordner_val_neg, 
-        datei_prefix="bg_val"
-    )
+    # prozessiere_lange_audiospur(
+    #     input_pfad=pfad_1h_validierung, 
+    #     output_ordner=ordner_val_neg, 
+    #     datei_prefix="bg_val"
+    # )
 
     print("\nFertig! Alle negativen Daten sind vorbereitet.")
 

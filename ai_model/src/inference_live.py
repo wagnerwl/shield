@@ -28,7 +28,7 @@ def lade_modell(modell_pfad):
 
 def main():
     # 1. Modell laden
-    modell_pfad = os.path.join(PROJECT_ROOT, "models", "mein_geraeusch_cnn.pt")
+    modell_pfad = os.path.join(PROJECT_ROOT, "models", "mein_geraeusch_cnn_004.pt")
     if not os.path.exists(modell_pfad):
         print(f"Fehler: Modell nicht gefunden unter {modell_pfad}")
         return
@@ -87,11 +87,18 @@ def main():
                 audio_buffer[-CHUNK_SIZE:] = audio_chunk
 
                 # D. Für PyTorch vorbereiten
-                # Shape: [1, 20480] (1 Kanal, 20480 Samples)
                 tensor_data = torch.from_numpy(audio_buffer).unsqueeze(0)
 
                 # E. Spektrogramm berechnen
                 mel_spec = mel_transform(tensor_data)
+                
+                # ==========================================
+                # NEU: Normalisierung (Exakt wie im Training!)
+                # ==========================================
+                mel_spec_mean = mel_spec.mean()
+                mel_spec_std = mel_spec.std()
+                mel_spec = (mel_spec - mel_spec_mean) / (mel_spec_std + 1e-6)
+                # ==========================================
                 
                 # F. Batch-Dimension hinzufügen -> Shape: [1, 1, 64, 41]
                 mel_spec_batch = mel_spec.unsqueeze(0)

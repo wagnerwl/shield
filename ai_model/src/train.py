@@ -54,6 +54,7 @@ def main():
     criterion = nn.BCELoss() 
     optimizer = optim.Adam(modell.parameters(), lr=config['training']['learning_rate'])
 
+    best_fp_rate = float('inf') # Startet bei unendlich
 
     print("\nStarte Training...")
     for epoch in range(config['training']['epochs']):
@@ -114,12 +115,20 @@ def main():
         stunden_negativ = (total_negatives * config['audio']['clip_length_seconds']) / 3600
         fp_per_hour = false_positives / stunden_negativ if stunden_negativ > 0 else 0
 
-        # --- Konsolenausgabe wie bei OWW ---
         print(f"\n--- Epoch {epoch+1:02d}/{config['training']['epochs']} ---")
         print(f"Training Loss:         {avg_train_loss:.4f}")
-        print(f"Validation Recall:     {val_recall*100:.1f} %   ({true_positives}/{total_positives} Geräuschen erkannt)")
-        print(f"Validation Accuracy:   {val_accuracy*100:.1f} %")
+        print(f"Validation Recall:     {val_recall*100:.1f} %")
         print(f"False Positives/Hour:  {fp_per_hour:.2f}")
+
+        # Speichere das Modell NUR, wenn die Fehlalarme besser geworden sind 
+        # (und der Recall trotzdem über z.B. 85% bleibt)
+        if fp_per_hour < best_fp_rate and val_recall > 0.85:
+            best_fp_rate = fp_per_hour
+            models_dir = os.path.join(PROJECT_ROOT, "models")
+            os.makedirs(models_dir, exist_ok=True)
+            speicher_pfad = os.path.join(models_dir, "mein_geraeusch_cnn_best.pt")
+            torch.save(modell.state_dict(), speicher_pfad)
+            print("🌟 Neues bestes Modell gespeichert!")
 
 
     # Modell speichern
@@ -127,7 +136,6 @@ def main():
     os.makedirs(models_dir, exist_ok=True)
     
     speicher_pfad = os.path.join(models_dir, "mein_geraeusch_cnn.pt")
-    torch.save(modell.state_dict(), speicher_pfad)
     print(f"\nTraining beendet! Modell gespeichert unter: {speicher_pfad}")
 
 if __name__ == "__main__":

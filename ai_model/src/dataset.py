@@ -74,6 +74,35 @@ class SoundDataset(Dataset):
 
     def __getitem__(self, idx):
         waveform, sr = torchaudio.load(self.file_paths[idx])
+        
+        # ==========================================
+        # 1. Volume Augmentation (Nur im Training!)
+        # ==========================================
+        # Mit 80% Wahrscheinlichkeit verändern wir die Lautstärke zufällig
+        import random
+        if random.random() < 0.8:
+            # Wählt einen zufälligen Faktor zwischen 0.1 (sehr leise) und 1.2 (etwas lauter)
+            gain = random.uniform(0.1, 1.2)
+            waveform = waveform * gain
+            
+        # ==========================================
+        # 2. Spektrogramm erstellen
+        # ==========================================
         mel_spec = self.mel_transform(waveform)
+        
+        # ==========================================
+        # 3. Normalisierung (Der wichtigste Schritt gegen Klatschen!)
+        # ==========================================
+        # Zieht den Mittelwert ab und teilt durch die Standardabweichung.
+        # Ein Klatschen und ein Glasbruch haben nun dieselbe "Grundhelligkeit", 
+        # das Netz MUSS jetzt auf die spezifischen Splitter/Klirr-Frequenzen achten.
+        mel_spec_mean = mel_spec.mean()
+        mel_spec_std = mel_spec.std()
+        
+        # Das + 1e-6 verhindert, dass wir durch Null teilen, falls absolute Stille herrscht
+        mel_spec = (mel_spec - mel_spec_mean) / (mel_spec_std + 1e-6) 
+        
+        # Label bereithalten
         label = torch.tensor([self.labels[idx]], dtype=torch.float32)
+        
         return mel_spec, label

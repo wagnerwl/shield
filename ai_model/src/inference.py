@@ -65,12 +65,19 @@ def analysiere_audio(audio_pfad, modell, threshold=0.5):
             
             # Umwandeln in Melspektrogramm (Shape: [1, 64, 41])
             mel_spec = mel_transform(chunk)
-            
-            # Pytorch erwartet immer einen Batch. Wir fügen eine künstliche Batch-Dimension hinzu.
-            # Aus Shape [1, 64, 41] wird [1, 1, 64, 41] (Batch=1)
+                
+            # ==========================================
+            # NEU: Normalisierung (Exakt wie im Training!)
+            # ==========================================
+            mel_spec_mean = mel_spec.mean()
+            mel_spec_std = mel_spec.std()
+            mel_spec = (mel_spec - mel_spec_mean) / (mel_spec_std + 1e-6)
+            # ==========================================
+                
+            # F. Batch-Dimension hinzufügen -> Shape: [1, 1, 64, 41]
             mel_spec_batch = mel_spec.unsqueeze(0)
-            
-            # Vorhersage machen (Output ist z.B. 0.85)
+                
+            # G. Vorhersage machen
             vorhersage = modell(mel_spec_batch).item()
             
             zeit_in_sekunden = start / config['audio']['sample_rate']
