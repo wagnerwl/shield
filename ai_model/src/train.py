@@ -27,7 +27,7 @@ def main():
     # Da wir nun mit Wahrscheinlichkeiten ziehen, müssen wir sagen, 
     # wie viele Clips wir pro Epoche insgesamt sehen wollen.
     # Z.B. 10.000 Ziehungen bilden eine Epoche.
-    EPOCH_SIZE = 10000 
+    EPOCH_SIZE = 30000 
     
     sampler = WeightedRandomSampler(
         weights=dataset.sample_weights,
@@ -44,7 +44,7 @@ def main():
     )
    
     val_dir = os.path.join(PROJECT_ROOT, "data", "processed", "val")
-    val_dataset = SoundDataset(val_dir)
+    val_dataset = SoundDataset(val_dir, is_train=False)
     # Beim Validieren brauchen wir keinen Sampler und kein Shuffle, 
     # wir testen einfach stur alle Dateien einmal durch.
     val_dataloader = DataLoader(val_dataset, batch_size=config['training']['batch_size'], shuffle=False)
@@ -52,7 +52,7 @@ def main():
      
     modell = SoundDetectorCNN()
     criterion = nn.BCELoss() 
-    optimizer = optim.Adam(modell.parameters(), lr=config['training']['learning_rate'])
+    optimizer = optim.Adam(modell.parameters(), lr=config['training']['learning_rate'], weight_decay=1e-4)
 
     best_fp_rate = float('inf') # Startet bei unendlich
 
@@ -91,7 +91,7 @@ def main():
                 vorhersagen = modell(val_mel)
                 
                 # Alles über 0.5 werten wir als "Geräusch erkannt" (1), darunter als "Hintergrund" (0)
-                preds = (vorhersagen >= 0.5).float()
+                preds = (vorhersagen >= 0.8).float()
                 
                 # Richtig positiv (Modell sagt 1, Wahrheit ist 1)
                 true_positives += ((preds == 1) & (val_labels == 1)).sum().item()

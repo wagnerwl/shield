@@ -16,7 +16,7 @@ class SoundDetectorCNN(nn.Module):
         self.fc1 = nn.Linear(5120, 64) 
         
         # NEU: Dropout-Schicht! Deaktiviert zufällig 50% der Verbindungen
-        self.dropout = nn.Dropout(p=0.5) 
+        self.dropout = nn.Dropout(p=0.6) 
         
         self.fc2 = nn.Linear(64, 1)
 
