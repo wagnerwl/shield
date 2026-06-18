@@ -97,12 +97,15 @@ def analysiere_audio(audio_pfad, modell, threshold=0.5):
 
 def main():
     # 1. Pfad zu deinem fertigen Modell
-    modell_pfad = os.path.join(PROJECT_ROOT, "models", "mein_geraeusch_cnn.pt")
+    modell_pfad = os.path.join(PROJECT_ROOT, "models", "mein_geraeusch_cnn_007.pt")
     
     # 2. Pfad zu einer beliebigen Test-Datei 
     # Nimm hier am besten eine ungeschnittene Datei, z.B. einen Ausschnitt aus 
     # deinem Validierungs-Hintergrund, oder nimm selbst ein kurzes Audio mit dem Handy auf.
-    test_audio_pfad = os.path.join(PROJECT_ROOT, "data", "test1.wav")
+
+    TEST_AUDIO = "ai_model/data/processed/val/pos/"
+
+    test_audio_pfad = os.path.join(TEST_AUDIO, "2sec_2sec_4-204115-A-39_normalized_16kHz_1280ms.wav")
     
     if not os.path.exists(test_audio_pfad):
         print(f"Test-Audio nicht gefunden unter: {test_audio_pfad}")
