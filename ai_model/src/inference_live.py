@@ -28,7 +28,7 @@ def lade_modell(modell_pfad):
 
 def main():
     # 1. Modell laden
-    modell_pfad = os.path.join(PROJECT_ROOT, "models", "mein_geraeusch_cnn_007.pt")
+    modell_pfad = os.path.join(PROJECT_ROOT, "models", "mein_geraeusch_cnn_008.pt")
     if not os.path.exists(modell_pfad):
         print(f"Fehler: Modell nicht gefunden unter {modell_pfad}")
         return

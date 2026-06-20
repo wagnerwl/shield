@@ -35,7 +35,7 @@ print("Starte Schritt 1: PyTorch zu ONNX...")
 
 model = SoundDetectorCNN()
 # Ersetze dies durch den echten Pfad zu deiner .pt Datei
-modell_pfad = "ai_model/models/mein_geraeusch_cnn_007.pt" 
+modell_pfad = "ai_model/models/mein_geraeusch_cnn_008.pt" 
 
 # Lädt die Gewichte (ignoriert evtl. Fehler, falls Teile fehlen, aber strict=True ist sicherer)
 model.load_state_dict(torch.load(modell_pfad, map_location=torch.device('cpu')))
@@ -43,7 +43,7 @@ model.eval()
 
 # Der von uns berechnete Dummy-Input
 dummy_input = torch.randn(1, 1, 64, 40) 
-onnx_path = "audio_cnn.onnx"
+onnx_path = "Arduino/onnx/audio_cnn.onnx"
 
 torch.onnx.export(
     model,
@@ -64,7 +64,7 @@ print("\nStarte Schritt 2: ONNX zu TFLite...")
 
 # onnx2tf arbeitet am besten als Kommandozeilen-Tool. 
 # Wir rufen es hier direkt aus dem Python-Skript heraus auf.
-ausgabe_ordner = "tflite_ausgabe"
+ausgabe_ordner = "Arduino/tflite_ausgabe"
 
 # Falls der Ordner nicht existiert, wird er von onnx2tf angelegt
 subprocess.run([
