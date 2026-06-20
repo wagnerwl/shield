@@ -4,21 +4,20 @@ import glob
 import torch
 import torchaudio
 import torchaudio.transforms as T
+import torchaudio.functional as F_audio # NEU FÜR RIR
 from torch.utils.data import Dataset
 import yaml
-import random # Am besten gleich oben importieren
+import random
 
 # Kugelsichere Pfade
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SRC_DIR) # Entspricht dem ai_model Ordner
 config_pfad = os.path.join(SRC_DIR, "config.yml")
 
 with open(config_pfad, "r") as f:
     config = yaml.safe_load(f)
 
 class SoundDataset(Dataset):
-    # ==========================================
-    # ÄNDERUNG 1: is_train Flag hinzugefügt
-    # ==========================================
     def __init__(self, data_dir, is_train=True):
         """
         data_dir: Pfad zum Ordner (z.B. 'data/processed/train')
@@ -29,6 +28,16 @@ class SoundDataset(Dataset):
         self.labels = []
         self.sample_weights = [] 
         
+        # ==========================================
+        # NEU: RIR Dateien laden (nur für Training)
+        # ==========================================
+        self.rir_files = []
+        if self.is_train:
+            # Pfad zum RIR-Datensatz: ai_model/data/rir_dataset
+            rir_dir = os.path.join(PROJECT_ROOT, "data", "rir_dataset", "convert") 
+            self.rir_files = glob.glob(os.path.join(rir_dir, "*.wav"))
+            print(f"RIR Dateien gefunden: {len(self.rir_files)}")
+
         pos_dir = os.path.join(data_dir, "pos")
         neg_bg_dir = os.path.join(data_dir, "neg_bg")
         neg_hard_dir = os.path.join(data_dir, "neg_hard")
@@ -72,10 +81,7 @@ class SoundDataset(Dataset):
             hop_length=config['audio']['hop_length']
         )
         
-        # ==========================================
-        # ÄNDERUNG 2: Maskierungs-Tools vorbereiten
-        # ==========================================
-        # Wir definieren hier, wie groß die schwarzen Balken maximal sein dürfen
+        # Maskierungs-Tools vorbereiten
         self.freq_masking = T.FrequencyMasking(freq_mask_param=15)
         self.time_masking = T.TimeMasking(time_mask_param=10)
 
@@ -84,10 +90,37 @@ class SoundDataset(Dataset):
 
     def __getitem__(self, idx):
         waveform, sr = torchaudio.load(self.file_paths[idx])
+        original_len = waveform.shape[1] # Länge merken für RIR!
         
         # ==========================================
-        # ÄNDERUNG 3: Volume Augmentation schützen
+        # NEU: RIR Augmentation anwenden
         # ==========================================
+        if self.is_train and len(self.rir_files) > 0:
+            if random.random() < 0.4: # In 40% der Fälle einen Raumhall anwenden
+                rir_pfad = random.choice(self.rir_files)
+                rir_waveform, rir_sr = torchaudio.load(rir_pfad)
+                
+                # Resampling, falls RIR eine andere Sample-Rate hat
+                if rir_sr != sr:
+                    rir_waveform = T.Resample(rir_sr, sr)(rir_waveform)
+                
+                # Auf Mono mischen, falls Stereo
+                if rir_waveform.shape[0] > 1:
+                    rir_waveform = rir_waveform.mean(dim=0, keepdim=True)
+                    
+                # RIR normalisieren (verhindert extreme Lautstärkesprünge)
+                norm = torch.norm(rir_waveform, p=2)
+                if norm > 0:
+                    rir_waveform = rir_waveform / norm
+                
+                # Faltung (Convolution) anwenden
+                waveform = F_audio.fftconvolve(waveform, rir_waveform)
+                
+                # WICHTIG: Durch die Faltung wird die Waveform länger. 
+                # Wir müssen sie wieder auf die Original-Länge abschneiden!
+                waveform = waveform[:, :original_len]
+
+        # Volume Augmentation schützen
         if self.is_train:
             if random.random() < 0.8:
                 gain = random.uniform(0.1, 1.2)
@@ -101,12 +134,7 @@ class SoundDataset(Dataset):
         mel_spec_std = mel_spec.std()
         mel_spec = (mel_spec - mel_spec_mean) / (mel_spec_std + 1e-6) 
         
-        # ==========================================
-        # ÄNDERUNG 4: SpecAugment anwenden
-        # ==========================================
-        # Zieht zufällige horizontale (Frequenz) und vertikale (Zeit) Balken über das Bild.
-        # So lernt das Modell, das Geräusch auch dann zu erkennen, wenn Teile davon
-        # überlagert werden oder kurz fehlen.
+        # SpecAugment anwenden
         if self.is_train:
             if random.random() < 0.5:
                 mel_spec = self.freq_masking(mel_spec)

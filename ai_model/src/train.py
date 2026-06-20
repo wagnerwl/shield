@@ -9,6 +9,23 @@ import yaml
 from model import SoundDetectorCNN
 from dataset import SoundDataset
 
+import torch.nn.functional as F
+
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=0.25, gamma=2.0):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+
+    def forward(self, inputs, targets):
+        # BCE_loss berechnen
+        bce_loss = F.binary_cross_entropy(inputs, targets, reduction='none')
+        # pt ist die Wahrscheinlichkeit für die richtige Klasse
+        pt = torch.exp(-bce_loss)
+        # Focal Loss Formel anwenden
+        focal_loss = self.alpha * (1 - pt)**self.gamma * bce_loss
+        return focal_loss.mean()
+
 # Kugelsichere Pfade
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SRC_DIR)
@@ -18,43 +35,69 @@ with open(config_pfad, "r") as f:
     config = yaml.safe_load(f)
 
 def main():
+    # ==========================================
+    # NEU: Apple Silicon (M1/M2/M3) GPU aktivieren
+    # ==========================================
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+        print("🚀 Nutze Apple M2 GPU (MPS) für das Training!")
+    else:
+        device = torch.device("cpu")
+        print("Nutze CPU...")
+
     train_dir = os.path.join(PROJECT_ROOT, "data", "processed", "train")
     
     print("Lade Dataset und berechne Gewichte...")
     dataset = SoundDataset(train_dir)
     
-    # --- DER SAMPLER ---
-    # Da wir nun mit Wahrscheinlichkeiten ziehen, müssen wir sagen, 
-    # wie viele Clips wir pro Epoche insgesamt sehen wollen.
-    # Z.B. 10.000 Ziehungen bilden eine Epoche.
     EPOCH_SIZE = 30000 
     
     sampler = WeightedRandomSampler(
         weights=dataset.sample_weights,
         num_samples=EPOCH_SIZE,
-        replacement=True # GANZ WICHTIG! Erlaubt es, ein positives Sample mehrfach pro Epoche zu ziehen
+        replacement=True 
     )
     
-    # Der DataLoader bekommt jetzt den Sampler übergeben.
-    # WICHTIG: shuffle=False! Der Sampler übernimmt ab sofort das Mischen.
+    # ==========================================
+    # NEU: num_workers und pin_memory hinzugefügt
+    # ==========================================
     dataloader = DataLoader(
         dataset, 
         batch_size=config['training']['batch_size'], 
-        sampler=sampler
+        sampler=sampler,
+        num_workers=2,      # 2 Kerne laden die Daten im Hintergrund
+        pin_memory=True     # Schiebt Daten schneller zur GPU
     )
    
     val_dir = os.path.join(PROJECT_ROOT, "data", "processed", "val")
     val_dataset = SoundDataset(val_dir, is_train=False)
-    # Beim Validieren brauchen wir keinen Sampler und kein Shuffle, 
-    # wir testen einfach stur alle Dateien einmal durch.
-    val_dataloader = DataLoader(val_dataset, batch_size=config['training']['batch_size'], shuffle=False)
+    
+    val_dataloader = DataLoader(
+        val_dataset, 
+        batch_size=config['training']['batch_size'], 
+        shuffle=False,
+        num_workers=2,      # 2 Kerne laden die Daten im Hintergrund
+        pin_memory=True     # Schiebt Daten schneller zur GPU
+    )
 
-     
-    modell = SoundDetectorCNN()
-    criterion = nn.BCELoss() 
+    # Modell initialisieren UND auf das Gerät (GPU) schieben
+    modell = SoundDetectorCNN().to(device)
+    
+    # criterion = nn.BCELoss() 
+    criterion = FocalLoss(alpha=0.25, gamma=2.0)
     optimizer = optim.Adam(modell.parameters(), lr=config['training']['learning_rate'], weight_decay=1e-4)
 
-    best_fp_rate = float('inf') # Startet bei unendlich
+    # ==========================================
+    # NEU: Learning Rate Scheduler
+    # ==========================================
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, 
+        mode='min',      # Wir wollen den Zielwert (False Positives) minimieren
+        factor=0.5,      # Wenn es nicht weitergeht: Lernrate halbieren
+        patience=2       # Nach 2 Epochen ohne Verbesserung greift der Scheduler
+    )
+    
+    best_fp_rate = float('inf')
 
     print("\nStarte Training...")
     for epoch in range(config['training']['epochs']):
@@ -62,10 +105,14 @@ def main():
         # ==========================
         # 1. TRAINING
         # ==========================
-        modell.train() # Wichtig: Sagt dem Modell, dass es jetzt lernt
+        modell.train() 
         running_train_loss = 0.0
         
-        for mel_specs_batch, labels_batch in dataloader: # Hier läuft der Trainings-Sampler
+        for mel_specs_batch, labels_batch in dataloader: 
+            # NEU: Daten auf die GPU schieben
+            mel_specs_batch = mel_specs_batch.to(device)
+            labels_batch = labels_batch.to(device)
+            
             optimizer.zero_grad()                 
             vorhersagen = modell(mel_specs_batch) 
             loss = criterion(vorhersagen, labels_batch) 
@@ -79,39 +126,35 @@ def main():
         # ==========================
         # 2. VALIDIERUNG (METRIKEN)
         # ==========================
-        modell.eval() # Wichtig: Sagt dem Modell, dass es jetzt NICHT lernt, sondern nur testet
+        modell.eval() 
         
         true_positives = 0
         false_positives = 0
         total_positives = 0
         total_negatives = 0
         
-        with torch.no_grad(): # Schaltet die Gradienten-Berechnung ab (spart Speicher & Zeit)
+        with torch.no_grad(): 
             for val_mel, val_labels in val_dataloader:
+                # NEU: Daten auf die GPU schieben
+                val_mel = val_mel.to(device)
+                val_labels = val_labels.to(device)
+                
                 vorhersagen = modell(val_mel)
                 
-                # Alles über 0.5 werten wir als "Geräusch erkannt" (1), darunter als "Hintergrund" (0)
                 preds = (vorhersagen >= 0.8).float()
                 
-                # Richtig positiv (Modell sagt 1, Wahrheit ist 1)
                 true_positives += ((preds == 1) & (val_labels == 1)).sum().item()
-                # Falsch positiv / Fehlalarm (Modell sagt 1, Wahrheit ist 0)
                 false_positives += ((preds == 1) & (val_labels == 0)).sum().item()
                 
                 total_positives += (val_labels == 1).sum().item()
                 total_negatives += (val_labels == 0).sum().item()
 
         # --- Metriken berechnen ---
-        # Accuracy: Wie viel Prozent aller Dateien (Pos + Neg) wurden richtig erkannt?
         richtig_erkannt = true_positives + (total_negatives - false_positives)
         val_accuracy = richtig_erkannt / (total_positives + total_negatives) if (total_positives + total_negatives) > 0 else 0
         
-        # Recall: Von allen ECHTEN Geräuschen, wie viele hat das Modell gefunden?
         val_recall = true_positives / total_positives if total_positives > 0 else 0
         
-        # False Positives pro Stunde: 
-        # Wie oft schlägt das Modell bei Hintergrundgeräuschen fälschlicherweise Alarm?
-        # Dauer aller negativen Validierungs-Clips berechnen:
         stunden_negativ = (total_negatives * config['audio']['clip_length_seconds']) / 3600
         fp_per_hour = false_positives / stunden_negativ if stunden_negativ > 0 else 0
 
@@ -119,9 +162,13 @@ def main():
         print(f"Training Loss:         {avg_train_loss:.4f}")
         print(f"Validation Recall:     {val_recall*100:.1f} %")
         print(f"False Positives/Hour:  {fp_per_hour:.2f}")
+        print(f"Learning Rate:         {optimizer.param_groups[0]['lr']:.6f}")
 
-        # Speichere das Modell NUR, wenn die Fehlalarme besser geworden sind 
-        # (und der Recall trotzdem über z.B. 85% bleibt)
+        # ==========================================
+        # NEU: Dem Scheduler den aktuellen Wert übergeben
+        # ==========================================
+        scheduler.step(fp_per_hour)
+
         if fp_per_hour < best_fp_rate and val_recall > 0.85:
             best_fp_rate = fp_per_hour
             models_dir = os.path.join(PROJECT_ROOT, "models")
@@ -130,8 +177,7 @@ def main():
             torch.save(modell.state_dict(), speicher_pfad)
             print("🌟 Neues bestes Modell gespeichert!")
 
-
-    # Modell speichern
+    # Modell am Ende speichern
     models_dir = os.path.join(PROJECT_ROOT, "models")
     os.makedirs(models_dir, exist_ok=True)
     
