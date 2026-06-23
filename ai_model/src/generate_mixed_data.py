@@ -11,7 +11,7 @@ import yaml
 # BITTE ANPASSEN: Tausche "C:/Dein/Projekt/Pfad" gegen deinen echten Pfad aus!
 # ==========================================
 config_pfad = "ai_model/src/config.yml"
-POS_DIR     = "ai_model/data/processed/train/pos"
+POS_DIR     = "ai_model/data/processed/train/pos_original"
 BG_DIR      = "Data_Frame/data/FP_DataSet/dev/4_Alltags_Ambience"
 OUTPUT_DIR  = "ai_model/data/processed/train/mixed_pos"
 
@@ -78,7 +78,7 @@ def main():
         
         bg_audio = match_length(bg_audio, pos_audio.shape[1])
         
-        bg_gain = random.uniform(0.1, 0.7)
+        bg_gain = random.uniform(0.05, 0.3)
         bg_audio = bg_audio * bg_gain
         
         mixed_audio = pos_audio + bg_audio
