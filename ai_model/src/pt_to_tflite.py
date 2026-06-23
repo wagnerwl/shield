@@ -54,7 +54,7 @@ model = SoundDetectorCNN()
 
 # WICHTIG: Nutze hier am besten das gespeicherte Best-Modell!
 # Passe den Pfad ggf. an, z.B. "ai_model/models/mein_geraeusch_cnn_best.pt"
-modell_pfad = "ai_model/models/mein_geraeusch_cnn_012.pt" 
+modell_pfad = "ai_model/models/mein_geraeusch_cnn_014.pt" 
 
 if not os.path.exists(modell_pfad):
     print(f"FEHLER: Konnte die Modelldatei nicht finden: {modell_pfad}")

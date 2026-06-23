@@ -28,7 +28,7 @@ def lade_modell(modell_pfad):
 
 def main():
     # 1. Modell laden
-    modell_pfad = os.path.join(PROJECT_ROOT, "models", "mein_geraeusch_cnn_012.pt")
+    modell_pfad = os.path.join(PROJECT_ROOT, "models", "mein_geraeusch_cnn_014.pt")
     if not os.path.exists(modell_pfad):
         print(f"Fehler: Modell nicht gefunden unter {modell_pfad}")
         return
@@ -52,6 +52,10 @@ def main():
         n_fft=config['audio']['n_fft'],
         hop_length=config['audio']['hop_length']
     )
+    # ==========================================
+    # NEU: Der Dezibel-Wandler für die Dynamik-Kompression
+    # ==========================================
+    db_transform = T.AmplitudeToDB()
 
     # Unser "rollender" Audio-Speicher (startet mit Stille)
     audio_buffer = np.zeros(BUFFER_SIZE, dtype=np.float32)
@@ -91,6 +95,11 @@ def main():
 
                 # E. Spektrogramm berechnen
                 mel_spec = mel_transform(tensor_data)
+
+                # ==========================================
+                # NEU: Auf Dezibel (Log-Skala) stauchen
+                # ==========================================
+                mel_spec = db_transform(mel_spec)
                 
                 # ==========================================
                 # NEU: Normalisierung (Exakt wie im Training!)

@@ -80,6 +80,7 @@ class SoundDataset(Dataset):
             n_fft=config['audio']['n_fft'],
             hop_length=config['audio']['hop_length']
         )
+        self.db_transform = T.AmplitudeToDB() # NEU HINZUFÜGEN!
         
         # Maskierungs-Tools vorbereiten
         self.freq_masking = T.FrequencyMasking(freq_mask_param=15)
@@ -128,7 +129,8 @@ class SoundDataset(Dataset):
             
         # Spektrogramm erstellen
         mel_spec = self.mel_transform(waveform)
-        
+        mel_spec = self.db_transform(mel_spec) # NEU: Komprimiert die Dynamik!
+
         # Normalisierung
         mel_spec_mean = mel_spec.mean()
         mel_spec_std = mel_spec.std()
