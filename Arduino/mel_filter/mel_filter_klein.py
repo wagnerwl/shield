@@ -2,14 +2,12 @@ import torchaudio.functional as F
 import torch
 import os
 
-# Unsere Parameter aus der config.yml
 n_fft = 1024
 n_mels = 64
 sample_rate = 16000
 
 print("Berechne die exakte PyTorch Mel-Filterbank (Sparse Edition)...")
 
-# PyTorch generiert uns die Matrix. 
 mel_filters = F.melscale_fbanks(
     n_freqs=int(n_fft // 2 + 1),
     f_min=0.0,
@@ -20,10 +18,10 @@ mel_filters = F.melscale_fbanks(
     mel_scale='htk'
 ).T
 
-# DEIN ORIGINALER PFAD
-header_pfad = "Arduino/mel_filter/mel_filters.h"
+ARDUINO_MAIN_DIR = "/Users/Jonas/Documents/Arduino/Shield_Software/main"
+header_pfad = os.path.join(ARDUINO_MAIN_DIR, "mel_filters.h")
 
-# Sicherstellen, dass der Ordner existiert
+print(f"Schreibe Header nach: {header_pfad}")
 os.makedirs(os.path.dirname(header_pfad), exist_ok=True)
 
 starts, lengths, values = [], [], []

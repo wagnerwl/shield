@@ -96,6 +96,7 @@ subprocess.run([
     "onnx2tf", 
     "-i", onnx_path, 
     "-o", ausgabe_ordner,
+    "--keep_ncw_or_nchw_or_ncdhw_input_names", "input", # <--- DIESE ZEILE NEU HINZUFÜGEN!
     "--non_verbose" 
 ], check=True)
 

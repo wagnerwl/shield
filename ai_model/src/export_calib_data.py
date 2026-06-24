@@ -26,20 +26,12 @@ print(f"Exportiere {max_samples} echte Spektrogramme nach '{export_dir}'...")
 
 for i in range(max_samples):
     mel_spec, label = dataset[i]
-    
-    # mel_spec ist ein PyTorch Tensor der Form [1, 64, 41] (Channels, Mels, Frames)
     mel_np = mel_spec.numpy()
     
-    # WICHTIG: PyTorch nutzt [Channels, Höhe, Breite]. 
-    # TensorFlow nutzt [Höhe, Breite, Channels]. 
-    # Wir müssen das Array drehen (transpose), damit TensorFlow es später versteht.
-    # Aus [1, 64, 41] wird [64, 41, 1]
-    mel_tf = np.transpose(mel_np, (1, 2, 0))
+    # WICHTIG: Kein np.transpose mehr! Wir bleiben strikt im PyTorch-Format.
+    # Aus [1, 64, 41] wird direkt [1, 1, 64, 41]
+    mel_tf = np.expand_dims(mel_np, axis=0)
     
-    # TensorFlow erwartet immer einen "Batch"-Rahmen ganz außen, also [1, 64, 41, 1]
-    mel_tf = np.expand_dims(mel_tf, axis=0)
-    
-    # Als .npy Datei speichern
     speicher_pfad = os.path.join(export_dir, f"sample_{i:03d}.npy")
     np.save(speicher_pfad, mel_tf)
 
